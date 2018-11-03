@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 
 	"github.com/mitchellh/go-homedir"
+	log "github.com/sirupsen/logrus"
 	tasks "google.golang.org/api/tasks/v1"
 )
 
@@ -41,4 +42,32 @@ func evaluateSymlinks(path string) (string, error) {
 		return "", err
 	}
 	return path, nil
+}
+
+// DeleteAll deletes all tasks in all lists.
+func (c Client) DeleteAll() error {
+	log.Info("Fetching all lists")
+	lists, err := c.api.Tasklists.List().Do()
+	if err != nil {
+		return err
+	}
+	for _, list := range lists.Items {
+		hasNextPage := true
+		for hasNextPage {
+			log.WithField("id", list.Id).WithField("title", list.Title).Info("Fetching all tasks")
+			tasks, err := c.api.Tasks.List(list.Id).Do()
+			if err != nil {
+				return err
+			}
+			log.WithField("count", len(tasks.Items)).Info("Deleting tasks")
+			for _, task := range tasks.Items {
+				if err := c.api.Tasks.Delete(list.Id, task.Id).Do(); err != nil {
+					return err
+				}
+			}
+			hasNextPage = tasks.NextPageToken != "" // continue until no next page.
+		}
+	}
+	log.Info("Done: deletion of all tasks in all lists completed successfully.")
+	return nil
 }
