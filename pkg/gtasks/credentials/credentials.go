@@ -5,6 +5,9 @@ import (
 	"io/ioutil"
 )
 
+// DefaultPath is the default filepath for OAuth JSON credentials.
+const DefaultPath = "~/.todo.txt-googletasks_credentials.json"
+
 // Credentials represents Google OAuth credentials.
 type Credentials struct {
 	ClientID     string `json:"client_id"`
