@@ -9,6 +9,6 @@ jobs:
       - run: |
           make build
       - run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASS
+          docker login quay.io -u $DOCKER_USER -p $DOCKER_PASS
           make docker-build
           make docker-push

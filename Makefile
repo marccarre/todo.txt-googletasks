@@ -18,10 +18,10 @@ build:
 	done
 
 docker-build:
-	docker build -t $(IMAGE):latest .
+	docker build -t quay.io/$(IMAGE):latest .
 
 docker-push:
-	docker push $(IMAGE):latest
+	docker push quay.io/$(IMAGE):latest
 
 clean:
 	rm -fr bin
