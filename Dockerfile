@@ -29,12 +29,12 @@ ENV GOOS=$GOOS
 
 # Compile for the configured operating system:
 RUN CGO_ENABLED=0 GOARCH=amd64 go build \
-  		# use the built-in net package:
-		-tags netgo -ldflags \
-		# -w: disable debug information for smaller binary
-		# -extldflags "-static": build a static binary to avoid having to install 3rd party libraries
-		'-w -extldflags "-static"' \
-		-o gtasks-${GOOS} cmd/gtasks/gtasks.go
+	# use the built-in net package:
+	-tags netgo -ldflags \
+	# -w: disable debug information for smaller binary
+	# -extldflags "-static": build a static binary to avoid having to install 3rd party libraries
+	'-w -extldflags "-static"' \
+	-o gtasks-${GOOS} cmd/gtasks/gtasks.go
 
 # ---------------------------------------------------------------------- runtime
 FROM scratch
