@@ -10,7 +10,7 @@ RUN apk --no-cache add curl && \
 	echo "287b08291e14f1fae8ba44374b26a2b12eb941af3497ed0ca649253e21ba2f83  dep" | sha256sum -c && \
 	chmod +x dep && \
 	mv dep $GOPATH/bin/dep && \
-	apk del nghttp2-libs libssh2 libcurl curl && \
+	apk del curl && \
 	rm -rf /var/cache/apk/*
 
 # Gopkg.toml and Gopkg.lock lists project dependencies.
