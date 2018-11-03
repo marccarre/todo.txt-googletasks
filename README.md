@@ -1,5 +1,6 @@
 [![CircleCI](https://circleci.com/gh/marccarre/todo.txt-googletasks/tree/master.svg?style=shield)](https://circleci.com/gh/marccarre/todo.txt-googletasks/tree/master)
 [![Docker Repository on Quay](https://quay.io/repository/marccarre/todo.txt-googletasks/status)](https://quay.io/repository/marccarre/todo.txt-googletasks)
+[![Go Report Card](https://goreportcard.com/badge/github.com/marccarre/todo.txt-googletasks)](https://goreportcard.com/report/github.com/marccarre/todo.txt-googletasks)
 
 # todo.txt-googletasks
 
