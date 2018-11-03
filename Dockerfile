@@ -1,5 +1,8 @@
 # ------------------------------------------------------------------------ setup
-FROM golang:1.11-alpine AS setup
+FROM golang:1.11.2-alpine3.8 AS setup
+
+# Install git, as not present in golang:1.11.2-alpine3.8 and required by dep ensure -vendor-only
+RUN apk --no-cache add git
 
 # Install dep, for dependencies management in Go:
 RUN apk --no-cache add curl && \
