@@ -1,0 +1,14 @@
+version: 2
+jobs:
+  build:
+    machine:
+      docker_layer_caching: true  # faster builds
+    working_directory: ~/go/src/github.com/marccarre/todo.txt-googletasks
+    steps:
+      - checkout
+      - run: |
+          make build
+      - run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASS
+          make docker-build
+          make docker-push
