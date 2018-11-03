@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/marccarre/todo.txt-googletasks/tree/master.svg?style=svg)](https://circleci.com/gh/marccarre/todo.txt-googletasks/tree/master)
+[![CircleCI](https://circleci.com/gh/marccarre/todo.txt-googletasks/tree/master.svg?style=shield)](https://circleci.com/gh/marccarre/todo.txt-googletasks/tree/master)
 
 # todo.txt-googletasks
 
