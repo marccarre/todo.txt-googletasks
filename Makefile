@@ -1,4 +1,4 @@
-.PHONY: all build docker-build
+.PHONY: build docker-build docker-push clean
 .DEFAULT_GOAL := build
 
 IMAGE_USER := marccarre
@@ -19,6 +19,9 @@ build:
 
 docker-build:
 	docker build -t $(IMAGE):latest .
+
+docker-push:
+	docker push $(IMAGE):latest
 
 clean:
 	rm -fr bin
