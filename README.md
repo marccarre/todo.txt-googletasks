@@ -1,5 +1,12 @@
 # todo.txt-googletasks
 
+## Features
+
+- Batteries included: no need to install any 3rd party dependency since the plugin is compiled as a static Go binary, with all dependencies inside it already.
+- Caching of Google OAuth token: once authenticated you can run things in a head-less way in scripts, via `cron`, etc.
+- Supported operations:
+  - Delete all tasks in all lists.
+
 ## Development
 
 ### Setup
