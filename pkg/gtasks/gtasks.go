@@ -7,8 +7,15 @@ import (
 	tasks "google.golang.org/api/tasks/v1"
 )
 
-// NewClient creates a new Google Tasks client from the provided credentials JSON file.
-func NewClient(path string) (*tasks.Service, error) {
+// Client encapsulates the Google Tasks and OAuth clients, and exposes
+// high-level operations on Google Tasks.
+type Client struct {
+	api *tasks.Service
+}
+
+// NewClient creates a new Google Tasks client from the provided credentials
+// JSON file.
+func NewClient(path string) (*Client, error) {
 	path, err := evaluateSymlinks(path)
 	if err != nil {
 		return nil, err
@@ -17,7 +24,11 @@ func NewClient(path string) (*tasks.Service, error) {
 	if err != nil {
 		return nil, err
 	}
-	return tasks.New(oauthClient)
+	api, err := tasks.New(oauthClient)
+	if err != nil {
+		return nil, err
+	}
+	return &Client{api: api}, nil
 }
 
 func evaluateSymlinks(path string) (string, error) {
