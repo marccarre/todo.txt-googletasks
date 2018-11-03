@@ -57,7 +57,7 @@ func newOAuthClient(ctx context.Context, config *oauth2.Config) (*http.Client, e
 		}
 		saveToken(cacheFile, token)
 	} else {
-		log.Infof("Using cached token %#v from %q", token, cacheFile)
+		log.WithField("token", token).WithField("file", cacheFile).Info("Using cached token.")
 	}
 	return config.Client(ctx, token), nil
 }
@@ -121,7 +121,7 @@ func tokenFromWeb(ctx context.Context, config *oauth2.Config) (*oauth2.Token, er
 	config.RedirectURL = ts.URL
 	authURL := config.AuthCodeURL(randState)
 	go openURL(authURL)
-	log.Infof("Authorise this app at: %s", authURL)
+	log.Infof("Please authorise this app at: %s", authURL)
 	code := <-ch
 	log.Infof("Got code: %s", code)
 
@@ -140,13 +140,13 @@ func openURL(url string) {
 			return
 		}
 	}
-	log.Errorf("Error opening URL in browser: %v", url)
+	log.WithField("url", url).Errorf("Error opening URL in browser")
 }
 
 func saveToken(filepath string, token *oauth2.Token) {
 	file, err := os.Create(filepath)
 	if err != nil {
-		log.Warnf("Warning: failed to cache OAuth token: %v", err)
+		log.WithField("error", err).Warnf("Failed to cache OAuth token")
 		return
 	}
 	defer file.Close()
