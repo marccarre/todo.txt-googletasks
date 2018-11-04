@@ -1,9 +1,9 @@
-.PHONY: build docker-build docker-push clean
+.PHONY: build test docker-build docker-push clean
 .DEFAULT_GOAL := build
 
 IMAGE_USER := marccarre
 IMAGE_NAME := todo.txt-googletasks
-IMAGE := $(IMAGE_USER)/$(IMAGE_NAME)
+IMAGE := quay.io/$(IMAGE_USER)/$(IMAGE_NAME)
 
 SUPPORTED_GOOS := linux darwin windows
 
@@ -17,15 +17,28 @@ build:
 		docker container rm -f build-$$os ; \
 	done
 
+test:
+	docker build --target testing -t $(IMAGE)-testing:latest \
+		--build-arg CI=$(CI) \
+		--build-arg COVERALLS_TOKEN=$(COVERALLS_TOKEN) \
+		--build-arg CLIENT_ID=$(CLIENT_ID) \
+		--build-arg CLIENT_SECRET=$(CLIENT_SECRET) \
+		.
+	docker container create --name test $(IMAGE)-testing:latest
+	docker container cp test:/go/src/github.com/marccarre/todo.txt-googletasks/coverage.out coverage.out
+	docker container rm -f test
+
 docker-build:
-	docker build -t quay.io/$(IMAGE):latest .
+	docker build -t $(IMAGE):latest .
 
 docker-push:
-	docker push quay.io/$(IMAGE):latest
+	docker push $(IMAGE):latest
 
 clean:
 	rm -fr bin
 	-for os in $(SUPPORTED_GOOS) ; do \
+		docker container rm -f test ; \
+		docker rmi $(IMAGE)-testing:latest ; \
 		docker container rm -f build-$$os ; \
 		docker rmi $(IMAGE)-build-$$os:latest ; \
 	done

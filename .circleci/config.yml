@@ -9,6 +9,13 @@ jobs:
       - run: |
           make build
       - run: |
+          make \
+            CI=$CI \
+            COVERALLS_TOKEN=$COVERALLS_TOKEN \
+            CLIENT_ID=$CLIENT_ID \
+            CLIENT_SECRET=$CLIENT_SECRET \
+            test
+      - run: |
           docker login quay.io -u $DOCKER_USER -p $DOCKER_PASS
           make docker-build
           make docker-push

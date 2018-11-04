@@ -13,6 +13,9 @@ RUN apk --no-cache add curl && \
 	apk del curl && \
 	rm -rf /var/cache/apk/*
 
+# Install goveralls, for code coverage:
+RUN go get github.com/mattn/goveralls
+
 # Gopkg.toml and Gopkg.lock lists project dependencies.
 # These layers will only be re-built when Gopkg files are updated:
 COPY Gopkg.lock Gopkg.toml /go/src/github.com/marccarre/todo.txt-googletasks/
@@ -38,6 +41,30 @@ RUN CGO_ENABLED=0 GOARCH=amd64 go build \
 	-tags netgo -ldflags \
 	'-w -extldflags "-static"' \
 	-o gtasks-${GOOS} cmd/gtasks/gtasks.go
+
+# ---------------------------------------------------------------------- testing
+FROM compilation AS testing
+
+# Set the provided Google Tasks API credentials:
+ARG CLIENT_ID
+ENV CLIENT_ID=$CLIENT_ID
+ARG CLIENT_SECRET
+ENV CLIENT_SECRET=$CLIENT_SECRET
+# Set the provided COVERALLS_TOKEN, or default it to empty string otherwise:
+ARG COVERALLS_TOKEN
+ENV COVERALLS_TOKEN=$COVERALLS_TOKEN
+# Set the provided CI env. var., or default it to empty string otherwise:
+ARG CI
+ENV CI=$CI
+
+# Run tests and, optionally, upload code coverage to coveralls.io:
+RUN CGO_ENABLED=0 go test -v -cover -covermode=count -coverprofile=coverage.out ./...
+RUN [ "$CI" == "true" ] && [ ! -z "$COVERALLS_TOKEN" ] && \
+	goveralls \
+	-coverprofile=/go/src/github.com/marccarre/todo.txt-googletasks/coverage.out \
+	-service=circle-ci \
+	-repotoken=$COVERALLS_TOKEN \
+	|| true
 
 # ---------------------------------------------------------------------- runtime
 FROM scratch

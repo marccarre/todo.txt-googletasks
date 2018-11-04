@@ -21,6 +21,6 @@ func checkPreconditions(t *testing.T) {
 		t.Skip("Skipped TestDeleteAll: short tests only should be run.")
 	}
 	if !credentials.EnvVarsSet() {
-		t.Skip("Skipped TestDeleteAll: required environment variables are missing.")
+		t.Skipf("Skipped TestDeleteAll: environment variables %v and %v are missing.", credentials.ClientID, credentials.ClientSecret)
 	}
 }
