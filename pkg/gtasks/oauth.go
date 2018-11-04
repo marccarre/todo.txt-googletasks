@@ -2,12 +2,12 @@ package gtasks
 
 import (
 	"context"
+	"crypto/md5"
 	"encoding/gob"
 	"fmt"
-	"hash/fnv"
+	"io"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -61,12 +61,12 @@ func newOAuthClient(ctx context.Context, config *oauth2.Config) (*http.Client, e
 }
 
 func tokenCacheFile(config *oauth2.Config) string {
-	hash := fnv.New32a()
-	hash.Write([]byte(config.ClientID))
-	hash.Write([]byte(config.ClientSecret))
-	hash.Write([]byte(strings.Join(config.Scopes, " ")))
-	fn := fmt.Sprintf("todo.txt-googletasks_%v", hash.Sum32())
-	return filepath.Join(osUserCacheDir(), url.QueryEscape(fn))
+	hash := md5.New()
+	io.WriteString(hash, config.ClientID)
+	io.WriteString(hash, config.ClientSecret)
+	io.WriteString(hash, strings.Join(config.Scopes, " "))
+	filename := fmt.Sprintf("todo.txt-googletasks_%x", hash.Sum(nil))
+	return filepath.Join(osUserCacheDir(), filename)
 }
 
 func osUserCacheDir() string {
