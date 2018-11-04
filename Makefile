@@ -18,6 +18,7 @@ build:
 	done
 
 test:
+	rm -f coverage.out
 	docker build --target testing -t $(IMAGE)-testing:latest \
 		--build-arg CI=$(CI) \
 		--build-arg COVERALLS_TOKEN=$(COVERALLS_TOKEN) \
@@ -36,6 +37,7 @@ docker-push:
 	docker push $(IMAGE):latest
 
 clean:
+	rm -f coverage.out
 	rm -fr bin
 	-for os in $(SUPPORTED_GOOS) ; do \
 		docker container rm -f test ; \
