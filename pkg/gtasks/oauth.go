@@ -22,12 +22,9 @@ import (
 	tasks "google.golang.org/api/tasks/v1"
 )
 
-// newOAuthClientFromJSONFile creates a new OAuth client from the provided credentials JSON file.
-func newOAuthClientFromJSONFile(filepath string) (*http.Client, error) {
-	credentials, err := credentials.NewFromJSONFile(filepath)
-	if err != nil {
-		return nil, err
-	}
+// newOAuthClientFromCredentials creates a new OAuth client from the provided
+// credentials.
+func newOAuthClientFromCredentials(credentials *credentials.Credentials) (*http.Client, error) {
 	config := &oauth2.Config{
 		ClientID:     credentials.ClientID,
 		ClientSecret: credentials.ClientSecret,
