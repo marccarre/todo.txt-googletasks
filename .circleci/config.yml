@@ -9,7 +9,7 @@ jobs:
       - run: |
           make build
       - run: |
-          echo -e "$TOKEN_BASE64_ENCODED" | base64 --decode > ~/.cache/todo.txt-googletasks_3411736364
+          echo -e "$TOKEN_BASE64_ENCODED" | base64 -w 0 --decode > ~/.cache/todo.txt-googletasks_3411736364
           make \
             CI=$CI \
             COVERALLS_TOKEN=$COVERALLS_TOKEN \
