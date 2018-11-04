@@ -6,6 +6,9 @@
 *.dylib
 bin/
 
+# DirEnv configuration file
+.envrc
+
 # Test binary, build with `go test -c`
 *.test
 
