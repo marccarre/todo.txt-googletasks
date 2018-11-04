@@ -44,3 +44,18 @@ All other tools are packaged in build Docker images (see `Dockerfile`) to ensure
 ```console
 make
 ```
+
+### Testing
+
+```console
+make test
+```
+
+Note that the above will not run integration tests.
+To do so, pass your credentials via the `CLIENT_ID` and `CLIENT_SECRET` environment variables.
+
+```console
+make CLIENT_ID=... CLIENT_SECRET=... test
+```
+
+N.B.: using [`direnv`](https://direnv.net/) / an `.envrc` file to automatically provide your credentials may be convenient.
