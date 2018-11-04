@@ -23,6 +23,7 @@ test:
 		--build-arg COVERALLS_TOKEN=$(COVERALLS_TOKEN) \
 		--build-arg CLIENT_ID=$(CLIENT_ID) \
 		--build-arg CLIENT_SECRET=$(CLIENT_SECRET) \
+		--build-arg BASE64_ENCODED_OAUTH_TOKEN=$(BASE64_ENCODED_OAUTH_TOKEN) \
 		.
 	docker container create --name test $(IMAGE)-testing:latest
 	docker container cp test:/go/src/github.com/marccarre/todo.txt-googletasks/coverage.out coverage.out

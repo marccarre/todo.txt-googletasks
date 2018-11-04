@@ -45,11 +45,18 @@ RUN CGO_ENABLED=0 GOARCH=amd64 go build \
 # ---------------------------------------------------------------------- testing
 FROM compilation AS testing
 
-# Set the provided Google Tasks API credentials:
+# Set the provided Google Tasks API credentials, as well as the OAuth token,
+# base64-encoded, as we cannot authenticate online within the container.
 ARG CLIENT_ID
 ENV CLIENT_ID=$CLIENT_ID
 ARG CLIENT_SECRET
 ENV CLIENT_SECRET=$CLIENT_SECRET
+ENV OAUTH_SCOPES=https://www.googleapis.com/auth/tasks
+ARG BASE64_ENCODED_OAUTH_TOKEN
+ENV BASE64_ENCODED_OAUTH_TOKEN=$BASE64_ENCODED_OAUTH_TOKEN
+RUN echo -n "${BASE64_ENCODED_OAUTH_TOKEN}" | base64 -d > \
+	~/.cache/todo.txt-googletasks_"$(echo -n "${CLIENT_ID}${CLIENT_SECRET}${OAUTH_SCOPES}" | md5sum | awk '{ print $1 }')"
+
 # Set the provided COVERALLS_TOKEN, or default it to empty string otherwise:
 ARG COVERALLS_TOKEN
 ENV COVERALLS_TOKEN=$COVERALLS_TOKEN

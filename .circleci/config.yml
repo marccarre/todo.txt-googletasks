@@ -9,12 +9,12 @@ jobs:
       - run: |
           make build
       - run: |
-          echo -e "$TOKEN_BASE64_ENCODED" | base64 -w 0 --decode > ~/.cache/todo.txt-googletasks_3411736364
           make \
             CI=$CI \
             COVERALLS_TOKEN=$COVERALLS_TOKEN \
             CLIENT_ID=$CLIENT_ID \
             CLIENT_SECRET=$CLIENT_SECRET \
+            BASE64_ENCODED_OAUTH_TOKEN=$BASE64_ENCODED_OAUTH_TOKEN \
             test
       - run: |
           docker login quay.io -u $DOCKER_USER -p $DOCKER_PASS
