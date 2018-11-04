@@ -58,7 +58,7 @@ ARG CI
 ENV CI=$CI
 
 # Run tests and, optionally, upload code coverage to coveralls.io:
-RUN CGO_ENABLED=0 go test -v -cover -covermode=count -coverprofile=coverage.out ./...
+RUN CGO_ENABLED=0 go test -v -timeout 30s -cover -covermode=count -coverprofile=coverage.out ./...
 RUN [ "$CI" == "true" ] && [ ! -z "$COVERALLS_TOKEN" ] && \
 	goveralls \
 	-coverprofile=/go/src/github.com/marccarre/todo.txt-googletasks/coverage.out \
