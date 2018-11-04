@@ -1,6 +1,7 @@
 [![CircleCI](https://circleci.com/gh/marccarre/todo.txt-googletasks/tree/master.svg?style=shield)](https://circleci.com/gh/marccarre/todo.txt-googletasks/tree/master)
-[![Docker Repository on Quay](https://quay.io/repository/marccarre/todo.txt-googletasks/status)](https://quay.io/repository/marccarre/todo.txt-googletasks)
 [![Go Report Card](https://goreportcard.com/badge/github.com/marccarre/todo.txt-googletasks)](https://goreportcard.com/report/github.com/marccarre/todo.txt-googletasks)
+[![Coverage Status](https://coveralls.io/repos/github/marccarre/todo.txt-googletasks/badge.svg)](https://coveralls.io/github/marccarre/todo.txt-googletasks)
+[![Docker Repository on Quay](https://quay.io/repository/marccarre/todo.txt-googletasks/status)](https://quay.io/repository/marccarre/todo.txt-googletasks)
 
 # todo.txt-googletasks
 
