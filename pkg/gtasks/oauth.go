@@ -48,13 +48,14 @@ func newOAuthClient(ctx context.Context, config *oauth2.Config) (*http.Client, e
 	cacheFile := tokenCacheFile(config)
 	token, err := tokenFromFile(cacheFile)
 	if err != nil {
+		log.WithField("error", err).WithField("file", cacheFile).Info("Cached OAuth token could not be found. Now trying to authenticate online...")
 		token, err = tokenFromWeb(ctx, config)
 		if err != nil {
 			return nil, err
 		}
 		saveToken(cacheFile, token)
 	} else {
-		log.WithField("token", token).WithField("file", cacheFile).Info("Using cached token.")
+		log.WithField("token", token).WithField("file", cacheFile).Info("Using cached OAuth token.")
 	}
 	return config.Client(ctx, token), nil
 }
