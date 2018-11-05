@@ -53,10 +53,21 @@ make test
 ```
 
 Note that the above will not run integration tests.
-To do so, pass your credentials via the `CLIENT_ID` and `CLIENT_SECRET` environment variables.
+To do so, since one cannot authenticate within the container (no browser), you will need to pass the following environment variables in:
+
+- `CLIENT_ID`: your Google client ID. This can be found in the JSON file downloaded from Google.
+- `CLIENT_SECRET`: your Google client secret. This can be found in the JSON file downloaded from Google.
+- `BASE64_ENCODED_OAUTH_TOKEN`: the content of your cached OAuth token, `base64`-encoded. The location of this file is printed when running `gtasks`.
 
 ```console
-make CLIENT_ID=... CLIENT_SECRET=... test
+export CLIENT_ID=yourid.apps.googleusercontent.com
+export CLIENT_SECRET=yoursecret
+export BASE64_ENCODED_OAUTH_TOKEN="$(cat /path/to/your/oauth/token | base64 -w 0)"
+make \
+    CLIENT_ID=$(CLIENT_ID) \
+    CLIENT_SECRET=$(CLIENT_ID) \
+    BASE64_ENCODED_OAUTH_TOKEN=$(BASE64_ENCODED_OAUTH_TOKEN) \
+    test
 ```
 
-N.B.: using [`direnv`](https://direnv.net/) / an `.envrc` file to automatically provide your credentials may be convenient.
+N.B.: using [`direnv`](https://direnv.net/) and an `.envrc` file to automatically set and export the above environment variables may be convenient.
