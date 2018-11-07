@@ -123,7 +123,7 @@ func tokenFromWeb(ctx context.Context, config *oauth2.Config) (*oauth2.Token, er
 func openURL(url string) {
 	bins := []string{"xdg-open", "google-chrome", "open"}
 	for _, bin := range bins {
-		err := exec.Command(bin, url).Run()
+		err := exec.Command(bin, url).Run() // #nosec: URL is based on constant google.Endpoint
 		if err == nil {
 			return
 		}
