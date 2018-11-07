@@ -7,6 +7,8 @@ jobs:
     steps:
       - checkout
       - run: |
+          make lint
+      - run: |
           make build
       - run: |
           make \

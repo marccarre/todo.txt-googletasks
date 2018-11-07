@@ -1,4 +1,4 @@
-.PHONY: build test docker-build docker-push clean
+.PHONY: lint build test docker-build docker-push clean
 .DEFAULT_GOAL := build
 
 IMAGE_USER := marccarre
@@ -6,6 +6,9 @@ IMAGE_NAME := todo.txt-googletasks
 IMAGE := quay.io/$(IMAGE_USER)/$(IMAGE_NAME)
 
 SUPPORTED_GOOS := linux darwin windows
+
+lint:
+	docker build --target lint -t $(IMAGE)-lint:latest .
 
 # For each supported operating system, build the binary, and then extract it from the build image:
 build:
@@ -44,5 +47,6 @@ clean:
 		docker rmi $(IMAGE)-testing:latest ; \
 		docker container rm -f build-$$os ; \
 		docker rmi $(IMAGE)-build-$$os:latest ; \
+		docker rmi $(IMAGE)-lint:latest ; \
 	done
 	-docker rmi $(IMAGE):latest
