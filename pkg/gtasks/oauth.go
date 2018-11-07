@@ -35,7 +35,10 @@ func newOAuthClientFromCredentials(credentials *credentials.Credentials) (*http.
 }
 
 func newOAuthClient(ctx context.Context, config *oauth2.Config) (*http.Client, error) {
-	cacheFile := tokenCacheFile(config)
+	cacheFile, err := tokenCacheFile(config)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate OAuth token filename: %s", err)
+	}
 	token, err := tokenFromFile(cacheFile)
 	if err != nil {
 		log.WithField("error", err).WithField("file", cacheFile).Info("Cached OAuth token could not be found. Now trying to authenticate online...")
@@ -53,14 +56,23 @@ func newOAuthClient(ctx context.Context, config *oauth2.Config) (*http.Client, e
 	return config.Client(ctx, token), nil
 }
 
-func tokenCacheFile(config *oauth2.Config) string {
+func tokenCacheFile(config *oauth2.Config) (string, error) {
 	hash := sha256.New()
-	io.WriteString(hash, config.ClientID)
-	io.WriteString(hash, config.ClientSecret)
-	io.WriteString(hash, strings.Join(config.Scopes, " "))
+	_, err := io.WriteString(hash, config.ClientID)
+	if err != nil {
+		return "", err
+	}
+	_, err = io.WriteString(hash, config.ClientSecret)
+	if err != nil {
+		return "", err
+	}
+	_, err = io.WriteString(hash, strings.Join(config.Scopes, " "))
+	if err != nil {
+		return "", err
+	}
 	suffix := fmt.Sprintf("%x", hash.Sum(nil))
 	filename := fmt.Sprintf("todo.txt-googletasks_%s", suffix[:8])
-	return filepath.Join(osUserCacheDir(), filename)
+	return filepath.Join(osUserCacheDir(), filename), nil
 }
 
 func osUserCacheDir() string {
