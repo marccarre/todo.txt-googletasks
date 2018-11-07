@@ -2,7 +2,7 @@ package gtasks
 
 import (
 	"context"
-	"crypto/md5"
+	"crypto/sha256"
 	"encoding/gob"
 	"fmt"
 	"io"
@@ -51,7 +51,7 @@ func newOAuthClient(ctx context.Context, config *oauth2.Config) (*http.Client, e
 }
 
 func tokenCacheFile(config *oauth2.Config) string {
-	hash := md5.New()
+	hash := sha256.New()
 	io.WriteString(hash, config.ClientID)
 	io.WriteString(hash, config.ClientSecret)
 	io.WriteString(hash, strings.Join(config.Scopes, " "))
