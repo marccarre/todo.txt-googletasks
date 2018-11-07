@@ -83,7 +83,7 @@ ENV OAUTH_SCOPES=https://www.googleapis.com/auth/tasks
 ARG BASE64_ENCODED_OAUTH_TOKEN
 ENV BASE64_ENCODED_OAUTH_TOKEN=$BASE64_ENCODED_OAUTH_TOKEN
 RUN echo -n "${BASE64_ENCODED_OAUTH_TOKEN}" | base64 -d > \
-	~/.cache/todo.txt-googletasks_"$(echo -n "${CLIENT_ID}${CLIENT_SECRET}${OAUTH_SCOPES}" | sha256sum | awk '{ print $1 }')"
+	~/.cache/todo.txt-googletasks_"$(echo -n "${CLIENT_ID}${CLIENT_SECRET}${OAUTH_SCOPES}" | sha256sum | awk '{ print $1 }' | head -c 8)"
 
 # Set the provided COVERALLS_TOKEN, or default it to empty string otherwise:
 ARG COVERALLS_TOKEN

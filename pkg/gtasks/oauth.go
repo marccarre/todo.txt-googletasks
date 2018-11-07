@@ -58,7 +58,8 @@ func tokenCacheFile(config *oauth2.Config) string {
 	io.WriteString(hash, config.ClientID)
 	io.WriteString(hash, config.ClientSecret)
 	io.WriteString(hash, strings.Join(config.Scopes, " "))
-	filename := fmt.Sprintf("todo.txt-googletasks_%x", hash.Sum(nil))
+	suffix := fmt.Sprintf("%x", hash.Sum(nil))
+	filename := fmt.Sprintf("todo.txt-googletasks_%s", suffix[:8])
 	return filepath.Join(osUserCacheDir(), filename)
 }
 
