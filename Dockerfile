@@ -48,8 +48,8 @@ FROM setup AS lint
 # Copy project. This layer will be rebuilt when ever a file has changed in the project directory
 COPY . /go/src/github.com/marccarre/todo.txt-googletasks
 
-RUN gometalinter $(go list ./...) && \
-	find . -name "*.md" -not -path "./vendor/*" -exec mdl --rules ~MD013 {} \;
+RUN find . -name "*.md" -not -path "./vendor/*" -exec mdl --rules ~MD013 {} \; && \
+	gometalinter $(go list ./...)
 
 # ------------------------------------------------------------------ compilation
 FROM setup AS compilation
