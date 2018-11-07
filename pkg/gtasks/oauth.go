@@ -41,9 +41,12 @@ func newOAuthClient(ctx context.Context, config *oauth2.Config) (*http.Client, e
 		log.WithField("error", err).WithField("file", cacheFile).Info("Cached OAuth token could not be found. Now trying to authenticate online...")
 		token, err = tokenFromWeb(ctx, config)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to authenticate online: %s", err)
 		}
-		saveToken(cacheFile, token)
+		err = saveToken(cacheFile, token)
+		if err != nil {
+			return nil, fmt.Errorf("failed to cache OAuth token: %s", err)
+		}
 	} else {
 		log.WithField("token", token).WithField("file", cacheFile).Info("Using cached OAuth token.")
 	}
@@ -131,12 +134,11 @@ func openURL(url string) {
 	log.WithField("url", url).Errorf("Error opening URL in browser")
 }
 
-func saveToken(filepath string, token *oauth2.Token) {
+func saveToken(filepath string, token *oauth2.Token) error {
 	file, err := os.Create(filepath)
 	if err != nil {
-		log.WithField("error", err).Warnf("Failed to cache OAuth token")
-		return
+		return err
 	}
 	defer file.Close()
-	gob.NewEncoder(file).Encode(token)
+	return gob.NewEncoder(file).Encode(token)
 }
