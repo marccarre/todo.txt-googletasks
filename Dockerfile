@@ -49,7 +49,7 @@ FROM setup AS lint
 COPY . /go/src/github.com/marccarre/todo.txt-googletasks
 
 RUN gometalinter $(go list ./...) && \
-	find . -name "*.md" -not -path "./vendor/*" -exec mdl {} \;
+	find . -name "*.md" -not -path "./vendor/*" -exec mdl --rules ~MD013 {} \;
 
 # ------------------------------------------------------------------ compilation
 FROM setup AS compilation
