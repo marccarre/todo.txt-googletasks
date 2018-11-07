@@ -31,17 +31,7 @@ func newOAuthClientFromCredentials(credentials *credentials.Credentials) (*http.
 		Endpoint:     google.Endpoint,
 		Scopes:       []string{tasks.TasksScope},
 	}
-	return newOAuthClient(newContext(false), config)
-}
-
-func newContext(debug bool) context.Context {
-	ctx := context.Background()
-	if debug {
-		ctx = context.WithValue(ctx, oauth2.HTTPClient, &http.Client{
-			Transport: &logTransport{http.DefaultTransport},
-		})
-	}
-	return ctx
+	return newOAuthClient(context.Background(), config)
 }
 
 func newOAuthClient(ctx context.Context, config *oauth2.Config) (*http.Client, error) {
