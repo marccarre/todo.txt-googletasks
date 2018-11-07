@@ -72,8 +72,8 @@ func osUserCacheDir() string {
 	return "."
 }
 
-func tokenFromFile(filepath string) (*oauth2.Token, error) {
-	file, err := os.Open(filepath)
+func tokenFromFile(path string) (*oauth2.Token, error) {
+	file, err := os.Open(filepath.Clean(path))
 	if err != nil {
 		return nil, err
 	}

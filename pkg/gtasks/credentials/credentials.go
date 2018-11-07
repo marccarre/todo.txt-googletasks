@@ -37,7 +37,7 @@ func NewFromJSONFile(path string) (*Credentials, error) {
 	if err != nil {
 		return nil, err
 	}
-	file, err := ioutil.ReadFile(path)
+	file, err := ioutil.ReadFile(filepath.Clean(path))
 	if err != nil {
 		return nil, err
 	}
