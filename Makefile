@@ -4,6 +4,7 @@
 IMAGE_USER := marccarre
 IMAGE_NAME := todo.txt-googletasks
 IMAGE := quay.io/$(IMAGE_USER)/$(IMAGE_NAME)
+VERSION := $(shell build/version)
 
 SUPPORTED_GOOS := linux darwin windows
 
@@ -14,9 +15,12 @@ lint:
 build:
 	@mkdir -p bin
 	for os in $(SUPPORTED_GOOS) ; do \
-		docker build --target compilation -t $(IMAGE)-build-$$os:latest --build-arg GOOS="$$os" . && \
+		docker build --target compilation -t $(IMAGE)-build-$$os:latest \
+			--build-arg GOOS="$$os" \
+			--build-arg VERSION=$(VERSION) \
+			. && \
 		docker container create --name build-$$os $(IMAGE)-build-$$os:latest && \
-		docker container cp build-$$os:/go/src/github.com/marccarre/todo.txt-googletasks/gtasks-$$os bin/gtasks-$$os && \
+		docker container cp build-$$os:/go/src/github.com/marccarre/todo.txt-googletasks/gtasks-$(VERSION)-$$os bin/gtasks-$(VERSION)-$$os && \
 		docker container rm -f build-$$os ; \
 	done
 
@@ -34,10 +38,12 @@ test:
 	docker container rm -f test
 
 docker-build:
-	docker build -t $(IMAGE):latest .
+	docker build -t $(IMAGE):$(VERSION) \
+		--build-arg VERSION=$(VERSION) \
+		.
 
 docker-push:
-	docker push $(IMAGE):latest
+	docker push $(IMAGE):$(VERSION)
 
 clean:
 	rm -f coverage.out
@@ -49,4 +55,4 @@ clean:
 		docker rmi $(IMAGE)-build-$$os:latest ; \
 		docker rmi $(IMAGE)-lint:latest ; \
 	done
-	-docker rmi $(IMAGE):latest
+	-docker rmi $(IMAGE):$(VERSION)

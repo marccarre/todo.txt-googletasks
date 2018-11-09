@@ -60,15 +60,19 @@ COPY . /go/src/github.com/marccarre/todo.txt-googletasks
 # Set the provided GOOS, or default it to "linux":
 ARG GOOS=linux
 ENV GOOS=$GOOS
+# Set the provided VERSION:
+ARG VERSION
+ENV VERSION=$VERSION
 
 # Compile for the configured operating system:
 # -tags netgo -ldflags: use the built-in net package
 # -w: disable debug information for smaller binary
 # -extldflags "-static": build a static binary to avoid having to install 3rd party libraries
+# -X pkg/version.Version=$(VERSION): injects this binary's version, so it can be printed later on
 RUN CGO_ENABLED=0 GOARCH=amd64 go build \
 	-tags netgo -ldflags \
-	'-w -extldflags "-static"' \
-	-o gtasks-${GOOS} cmd/gtasks/gtasks.go
+	"-w -extldflags '-static' -X github.com/marccarre/todo.txt-googletasks/pkg/version.Version=${VERSION}" \
+	-o gtasks-${VERSION}-${GOOS} cmd/gtasks/gtasks.go
 
 # ---------------------------------------------------------------------- testing
 FROM compilation AS testing
@@ -103,6 +107,10 @@ RUN [ "$CI" == "true" ] && [ ! -z "$COVERALLS_TOKEN" ] && \
 
 # ---------------------------------------------------------------------- runtime
 FROM scratch
-COPY --from=compilation /go/src/github.com/marccarre/todo.txt-googletasks/gtasks-linux /gtasks
+# Set the provided VERSION:
+ARG VERSION
+ENV VERSION=$VERSION
+# Copy the binary from the compilation stage:
+COPY --from=compilation /go/src/github.com/marccarre/todo.txt-googletasks/gtasks-${VERSION}-linux /gtasks
 ENTRYPOINT ["/gtasks"]
 CMD ["--help"]
