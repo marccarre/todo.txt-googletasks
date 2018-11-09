@@ -3,19 +3,17 @@ FROM golang:1.11.2-alpine3.8 AS setup
 
 # Install git, as not present in golang:1.11.2-alpine3.8 and required by dep ensure -vendor-only
 RUN apk --no-cache add git
+# Install bash & curl, as not present in golang:1.11.2-alpine3.8 and required by codecov
+RUN apk --no-cache add bash curl
 
 # Install dep, for dependencies management in Go:
-RUN apk --no-cache add curl && \
-	curl -fsSLo dep https://github.com/golang/dep/releases/download/v0.5.0/dep-linux-amd64 && \
+RUN curl -fsSLo dep https://github.com/golang/dep/releases/download/v0.5.0/dep-linux-amd64 && \
 	echo "287b08291e14f1fae8ba44374b26a2b12eb941af3497ed0ca649253e21ba2f83  dep" | sha256sum -c && \
 	chmod +x dep && \
-	mv dep $GOPATH/bin/dep && \
-	apk del curl && \
-	rm -rf /var/cache/apk/*
+	mv dep $GOPATH/bin/dep
 
 # Install gometalinter and all underlying linters, for code quality:
-RUN apk --no-cache add curl && \
-	curl -fsSLo gometalinter.tar.gz https://github.com/alecthomas/gometalinter/releases/download/v2.0.11/gometalinter-2.0.11-linux-amd64.tar.gz && \
+RUN curl -fsSLo gometalinter.tar.gz https://github.com/alecthomas/gometalinter/releases/download/v2.0.11/gometalinter-2.0.11-linux-amd64.tar.gz && \
 	echo "97d8bd0a4d024740964c7fc2ae41276cf5f839ccf0749528ca900942f656d201  gometalinter.tar.gz" | sha256sum -c && \
 	tar xzf gometalinter.tar.gz && \
 	cd gometalinter-2.0.11-linux-amd64 && \
@@ -23,9 +21,7 @@ RUN apk --no-cache add curl && \
 	chmod +x * && \
 	mv * $GOPATH/bin && \
 	cd .. && \
-	rm -rf gometalinter-2.0.11-linux-amd64 && \
-	apk del curl && \
-	rm -rf /var/cache/apk/*
+	rm -rf gometalinter-2.0.11-linux-amd64
 
 # Install markdownlint and its dependencies:
 RUN apk --no-cache add ruby ruby-json && \
@@ -86,16 +82,19 @@ RUN echo -n "${BASE64_ENCODED_OAUTH_TOKEN}" | base64 -d > \
 
 # Set the provided COVERALLS_TOKEN, or default it to empty string otherwise:
 ARG COVERALLS_TOKEN
+# Set the provided CODECOV_TOKEN, or default it to empty string otherwise:
+ARG CODECOV_TOKEN
 # Set the provided CI env. var., or default it to empty string otherwise:
 ARG CI
 
-# Run tests and, optionally, upload code coverage to coveralls.io:
+# Run tests and, optionally, upload code coverage to coveralls.io and codecov.io:
 RUN CGO_ENABLED=0 go test -v -timeout 30s -cover -covermode=count -coverprofile=coverage.out ./...
-RUN if [ "$CI" == "true" ] && [ ! -z "$COVERALLS_TOKEN" ] ; then \
+RUN if [ "$CI" == "true" ] && [ ! -z "$COVERALLS_TOKEN" ] && [ ! -z "$CODECOV_TOKEN" ]; then \
 	goveralls \
 	-coverprofile=/go/src/github.com/marccarre/todo.txt-googletasks/coverage.out \
-	-service=circle-ci \
-	-repotoken=$COVERALLS_TOKEN ; else echo "Skipped upload of code coverage." ; fi
+	-service=circle-ci -repotoken=$COVERALLS_TOKEN ; \
+	curl -fsSLo codecov.sh https://codecov.io/bash ; chmod +x codecov.sh ; ./codecov.sh -t $CODECOV_TOKEN ; else \
+	echo "Skipped upload of code coverage." ; fi
 
 
 # ---------------------------------------------------------------------- runtime

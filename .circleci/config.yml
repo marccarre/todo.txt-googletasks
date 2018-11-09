@@ -14,6 +14,7 @@ jobs:
           make \
             CI=$CI \
             COVERALLS_TOKEN=$COVERALLS_TOKEN \
+            CODECOV_TOKEN=$CODECOV_TOKEN \
             CLIENT_ID=$CLIENT_ID \
             CLIENT_SECRET=$CLIENT_SECRET \
             BASE64_ENCODED_OAUTH_TOKEN=$BASE64_ENCODED_OAUTH_TOKEN \

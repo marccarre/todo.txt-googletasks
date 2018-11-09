@@ -29,6 +29,7 @@ test:
 	@docker build --target testing -t $(IMAGE)-testing:latest \
 		--build-arg CI=$(CI) \
 		--build-arg COVERALLS_TOKEN=$(COVERALLS_TOKEN) \
+		--build-arg CODECOV_TOKEN=$(CODECOV_TOKEN) \
 		--build-arg CLIENT_ID=$(CLIENT_ID) \
 		--build-arg CLIENT_SECRET=$(CLIENT_SECRET) \
 		--build-arg BASE64_ENCODED_OAUTH_TOKEN=$(BASE64_ENCODED_OAUTH_TOKEN) \
