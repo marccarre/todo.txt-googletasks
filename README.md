@@ -21,7 +21,7 @@
 - Click on "[_Dashboard_](https://console.developers.google.com/apis/dashboard?supportedpurview=project)", then [_Enable APIs and services_](https://console.developers.google.com/apis/library?supportedpurview=project). Filter APIs by typing "_task_" in the search box, and click on "[_Tasks API_](https://console.developers.google.com/apis/library/tasks.googleapis.com)". Click "_Enable_".
 - After a few seconds, you should see the message "_To use this API, you may need credentials. Click 'Create credentials' to get started._". Click on [_Create credentials_](https://console.developers.google.com/apis/credentials/wizard).
 - Under "_Which API are you using?_", select "_Tasks API_".
-  Under "_Where will you be calling the API from?_", select "_Other UI (e.g. Windows, CLI tool).
+  Under "_Where will you be calling the API from?_", select "_Other UI (e.g. Windows, CLI tool)_".
   Under "_What data will you be accessing?_", select "_User data_".
   Click "_What credentials do I need?_". You should arrive on a page saying "_Create an OAuth 2.0 client ID_".
 - Enter `todotxt-googletasks` under "_Name_", click "_Create OAuth client ID_".
