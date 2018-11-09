@@ -59,10 +59,8 @@ COPY . /go/src/github.com/marccarre/todo.txt-googletasks
 
 # Set the provided GOOS, or default it to "linux":
 ARG GOOS=linux
-ENV GOOS=$GOOS
 # Set the provided VERSION:
 ARG VERSION
-ENV VERSION=$VERSION
 
 # Compile for the configured operating system:
 # -tags netgo -ldflags: use the built-in net package
@@ -80,37 +78,29 @@ FROM compilation AS testing
 # Set the provided Google Tasks API credentials, as well as the OAuth token,
 # base64-encoded, as we cannot authenticate online within the container.
 ARG CLIENT_ID
-ENV CLIENT_ID=$CLIENT_ID
 ARG CLIENT_SECRET
-ENV CLIENT_SECRET=$CLIENT_SECRET
 ENV OAUTH_SCOPES=https://www.googleapis.com/auth/tasks
 ARG BASE64_ENCODED_OAUTH_TOKEN
-ENV BASE64_ENCODED_OAUTH_TOKEN=$BASE64_ENCODED_OAUTH_TOKEN
 RUN echo -n "${BASE64_ENCODED_OAUTH_TOKEN}" | base64 -d > \
 	~/.cache/todo.txt-googletasks_"$(echo -n "${CLIENT_ID}${CLIENT_SECRET}${OAUTH_SCOPES}" | sha256sum | awk '{ print $1 }' | head -c 8)"
 
 # Set the provided COVERALLS_TOKEN, or default it to empty string otherwise:
 ARG COVERALLS_TOKEN
-ENV COVERALLS_TOKEN=$COVERALLS_TOKEN
 # Set the provided CI env. var., or default it to empty string otherwise:
 ARG CI
-ENV CI=$CI
 
 # Run tests and, optionally, upload code coverage to coveralls.io:
 RUN CGO_ENABLED=0 go test -v -timeout 30s -cover -covermode=count -coverprofile=coverage.out ./...
-RUN [ "$CI" == "true" ] && [ ! -z "$COVERALLS_TOKEN" ] && \
+RUN if [ "$CI" == "true" ] && [ ! -z "$COVERALLS_TOKEN" ] ; then \
 	goveralls \
 	-coverprofile=/go/src/github.com/marccarre/todo.txt-googletasks/coverage.out \
 	-service=circle-ci \
-	-repotoken=$COVERALLS_TOKEN \
-	|| true
+	-repotoken=$COVERALLS_TOKEN ; else echo "Skipped upload of code coverage." ; fi
+
 
 # ---------------------------------------------------------------------- runtime
 FROM scratch
-# Set the provided VERSION:
 ARG VERSION
-ENV VERSION=$VERSION
-# Copy the binary from the compilation stage:
 COPY --from=compilation /go/src/github.com/marccarre/todo.txt-googletasks/gtasks-${VERSION}-linux /gtasks
 ENTRYPOINT ["/gtasks"]
 CMD ["--help"]
