@@ -26,7 +26,7 @@ build:
 
 test:
 	rm -f coverage.out
-	docker build --target testing -t $(IMAGE)-testing:latest \
+	@docker build --target testing -t $(IMAGE)-testing:latest \
 		--build-arg CI=$(CI) \
 		--build-arg COVERALLS_TOKEN=$(COVERALLS_TOKEN) \
 		--build-arg CLIENT_ID=$(CLIENT_ID) \
