@@ -15,7 +15,7 @@ lint:
 build:
 	@mkdir -p bin
 	for os in $(SUPPORTED_GOOS) ; do \
-		docker build --target compilation -t $(IMAGE)-build-$$os:latest \
+		docker build --target build -t $(IMAGE)-build-$$os:latest \
 			--build-arg GOOS="$$os" \
 			--build-arg VERSION=$(VERSION) \
 			. && \
@@ -25,8 +25,7 @@ build:
 	done
 
 test:
-	rm -f coverage.out
-	@docker build --target testing -t $(IMAGE)-testing:latest \
+	@docker build --target test -t $(IMAGE)-test:latest \
 		--build-arg CI=$(CI) \
 		--build-arg COVERALLS_TOKEN=$(COVERALLS_TOKEN) \
 		--build-arg CODECOV_TOKEN=$(CODECOV_TOKEN) \
@@ -34,9 +33,6 @@ test:
 		--build-arg CLIENT_SECRET=$(CLIENT_SECRET) \
 		--build-arg BASE64_ENCODED_OAUTH_TOKEN=$(BASE64_ENCODED_OAUTH_TOKEN) \
 		.
-	docker container create --name test $(IMAGE)-testing:latest
-	docker container cp test:/go/src/github.com/marccarre/todo.txt-googletasks/coverage.out coverage.out
-	docker container rm -f test
 
 docker-build:
 	docker build -t $(IMAGE):$(VERSION) \
@@ -47,13 +43,11 @@ docker-push:
 	docker push $(IMAGE):$(VERSION)
 
 clean:
-	rm -f coverage.out
 	rm -fr bin
+	-docker rmi $(IMAGE):$(VERSION)
+	-docker rmi $(IMAGE)-test:latest
 	-for os in $(SUPPORTED_GOOS) ; do \
-		docker container rm -f test ; \
-		docker rmi $(IMAGE)-testing:latest ; \
 		docker container rm -f build-$$os ; \
 		docker rmi $(IMAGE)-build-$$os:latest ; \
-		docker rmi $(IMAGE)-lint:latest ; \
 	done
-	-docker rmi $(IMAGE):$(VERSION)
+	-docker rmi $(IMAGE)-lint:latest
