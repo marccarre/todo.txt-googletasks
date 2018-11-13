@@ -47,8 +47,8 @@ COPY . /go/src/github.com/marccarre/todo.txt-googletasks
 RUN find . -name "*.md" -not -path "./vendor/*" -exec mdl --rules ~MD013 {} \; && \
 	gometalinter $(go list ./...)
 
-# ------------------------------------------------------------------ compilation
-FROM setup AS compilation
+# ------------------------------------------------------------------------ build
+FROM setup AS build
 
 # Copy project. This layer will be rebuilt when ever a file has changed in the project directory
 COPY . /go/src/github.com/marccarre/todo.txt-googletasks
@@ -68,8 +68,8 @@ RUN CGO_ENABLED=0 GOARCH=amd64 go build \
 	"-w -extldflags '-static' -X github.com/marccarre/todo.txt-googletasks/pkg/version.Version=${VERSION}" \
 	-o gtasks-${VERSION}-${GOOS} cmd/gtasks/gtasks.go
 
-# ---------------------------------------------------------------------- testing
-FROM compilation AS testing
+# ------------------------------------------------------------------------- test
+FROM build AS test
 
 # Set the provided Google Tasks API credentials, as well as the OAuth token,
 # base64-encoded, as we cannot authenticate online within the container.
@@ -100,6 +100,6 @@ RUN if [ "$CI" == "true" ] && [ ! -z "$COVERALLS_TOKEN" ] && [ ! -z "$CODECOV_TO
 # ---------------------------------------------------------------------- runtime
 FROM scratch
 ARG VERSION
-COPY --from=compilation /go/src/github.com/marccarre/todo.txt-googletasks/gtasks-${VERSION}-linux /gtasks
+COPY --from=build /go/src/github.com/marccarre/todo.txt-googletasks/gtasks-${VERSION}-linux /gtasks
 ENTRYPOINT ["/gtasks"]
 CMD ["--help"]
