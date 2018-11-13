@@ -1,4 +1,9 @@
-.gitignore
+.circleci/
 bin/
 vendor/
+.envrc
+.gitignore
+.tasks.dat
+coverage.out
+LICENSE
 Makefile
